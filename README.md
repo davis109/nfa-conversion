@@ -17,7 +17,7 @@ This tool is used to convert [non-deterministic finite automata](https://en.wiki
 
 _Originally created by [Alex Klibisz](https://github.com/alexklibisz) and [Connor Minton](https://github.com/c-minton), COSC 312, Spring 2015, University of Tennessee, Knoxville._
 
-_Rewritten and enhanced by [Joey Lemon](https://github.com/joeylemon) and [Camille Williford](https://github.com/awillif), COSC 493, Fall 2021, University of Tennessee, Knoxville._
+_Rewritten and enhanced by [Davis Sebastian](https://github.com/davis109) and [Camille Williford](https://github.com/awillif), COSC 493, Fall 2021, University of Tennessee, Knoxville._
 
 ## Contributing
 
