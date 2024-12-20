@@ -1,8 +1,3 @@
-# Visual NFA to DFA Converter
-![Lint and Test](https://github.com/joeylemon/nfa-to-dfa/workflows/Lint%20and%20Test/badge.svg)
-
-https://joeylemon.github.io/nfa-to-dfa/
-
 ## Overview
 
 <img alt="Screenshot of the main application interface" src="https://user-images.githubusercontent.com/8845512/125208072-67ba5500-e25e-11eb-8b6e-c798ece6caf1.png">
