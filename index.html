@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>NFA to DFA Converter</title>
+    <meta name="description" content="This tool is used to convert non-deterministic finite automata (NFA) to deterministic finite automata (DFA) through an interactive and visual interface.">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="src/img/favicon.png" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+
+    <!-- Import fonts from Google Fonts, such as Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+
+    <!-- Material Icons provides in-line action icons, such as those in the right-click edit menu in the canvas -->
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="src/css/mdi.css">
+
+    <!-- Bulma provides a lightweight CSS3 library, including Flexbox grid layouts and button styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+
+    <link rel="stylesheet" href="src/css/main.css">
+</head>
+
+<body>
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand" style="padding-left: 15px;">
+            <a class="navbar-item" href="https://joeylemon.github.io/nfa-to-dfa">
+                <img src="src/img/logo.png" width="100" height="28">
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="https://github.com/joeylemon/nfa-to-dfa/blob/master/README.md">
+                    About
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                  
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="notification is-danger" id="warning" style="display: none;">
+        <button class="delete"></button>
+        <span class="notification-body"></span>
+    </div>
+
+    <div class="modal help-modal" id="nfa-help-modal">
+        <div class="modal-background modal-close-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">How to Build the NFA</p>
+                <button class="delete modal-close-button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>Start building the NFA by <nobr>right-clicking
+                        <i class="mdi mdi-mouse" aria-hidden="true"></i>
+                    </nobr>
+                    on the canvas to create a node. Then, <nobr>right-click
+                        <i class="mdi mdi-mouse" aria-hidden="true"></i>
+                    </nobr>
+                    on the new node to create a transition, edit its properties, or delete
+                    it.
+                    You can <nobr>
+                        pan
+                        <i class="mdi mdi-cursor-pointer" aria-hidden="true"></i>
+                    </nobr>
+                    the canvas by clicking and dragging the mouse. You can <nobr>zoom
+                        <i class="mdi mdi-magnify-plus" aria-hidden="true"></i>
+                    </nobr>
+                    the canvas by hovering the mouse over the canvas and scrolling up or down. Additionally, you can
+                    import a saved NFA or use one from a list of presets.</p>
+                <p>When creating a transition between nodes, you will be prompted to press a key on your keyboard to
+                    represent the transition symbol. You can use any key, including uppercase values. However, to create
+                    an epsilon (ε) transition, you must press the <img src="src/img/e_key.png" style="height: 15px;"
+                        alt="E" /> key on your keyboard.</p>
+                <video id="nfa-help-video" loop muted playsinline>
+                    <source src="src/img/nfa-help.mp4" type="video/mp4" />
+                    <source src="src/img/nfa-help.webm" type="video/webm" />
+                </video>
+                <p class="subtitle">A video demonstration of the NFA creation process.</p>
+            </section>
+        </div>
+    </div>
+
+    <div class="modal help-modal" id="dfa-help-modal">
+        <div class="modal-background modal-close-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">How to Convert to a DFA</p>
+                <button class="delete modal-close-button" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>After building the NFA, you can then start converting it to a DFA. This
+                    can be
+                    done in <nobr>
+                        steps
+                        <i class="mdi mdi-skip-next" aria-hidden="true"></i>
+                    </nobr>,
+                    <nobr>animated
+                        <i class="mdi mdi-play" aria-hidden="true"></i>
+                    </nobr>,
+                    or all at <nobr>once
+                        <i class="mdi mdi-skip-forward" aria-hidden="true"></i>
+                    </nobr>. You
+                    can revisit previous actions by going backwards <nobr><i class="mdi mdi-skip-previous"
+                            aria-hidden="true"></i></nobr>.
+                    You
+                    may drag nodes around to
+                    reorganize
+                    the visual layout. However, node-editing features are disabled. To
+                    change the DFA, you must
+                    first
+                    change the NFA.
+                </p>
+                <video id="dfa-help-video" loop muted playsinline>
+                    <source src="src/img/dfa-help.mp4" type="video/mp4" />
+                    <source src="src/img/dfa-help.webm" type="video/webm" />
+                </video>
+                <p class="subtitle">A video demonstration of the DFA conversion process.</p>
+            </section>
+        </div>
+    </div>
+
+    <div class="columns is-desktop">
+        <div class="column">
+            <div class="card title" id="nfa-title">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column">
+                            <h1>
+                                Non-deterministic
+                                Finite Automaton
+                                (NFA)
+                            </h1>
+                        </div>
+                        <div class="column is-1">
+                            <button class="button orange-button" id="nfa-help-button" aria-haspopup="true"
+                                style="width:100%;" title="View instructions on how to use the NFA builder">
+                                <i class="mdi mdi-36px mdi-help-circle-outline title-help-icon" aria-hidden="true"
+                                    style="color: #fff;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button orange-button" id="import" style="width:100%;"
+                            title="Import a saved NFA JSON file">
+                            <i class="mdi mdi-upload" aria-hidden="true"></i>Import
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button orange-button" id="export" style="width:100%;"
+                            title="Export the NFA to a JSON file" disabled>
+                            <i class="mdi mdi-download" aria-hidden="true"></i>Export
+                        </button>
+                    </div>
+                    <div class="column">
+                        <div class="dropdown" id="preset-dropdown" style="width:100%;">
+                            <div class="dropdown-trigger" style="width:100%;">
+                                <button class="button orange-button" aria-haspopup="true" aria-controls="dropdown-menu"
+                                    style="width:100%;" title="Use a predefined example NFA">
+                                    <i class="mdi mdi-format-list-bulleted" aria-hidden="true"></i>Presets
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" role="menu" style="width:100%;">
+                                <div class="dropdown-content">
+                                    <a class="dropdown-item" id="preset-1">
+                                        <i class="mdi mdi-18px mdi-graph" aria-hidden="true"></i> Preset #1
+                                    </a>
+                                    <a class="dropdown-item" id="preset-2">
+                                        <i class="mdi mdi-18px mdi-graph" aria-hidden="true"></i> Preset #2
+                                    </a>
+                                    <a class="dropdown-item" id="preset-3">
+                                        <i class="mdi mdi-18px mdi-graph" aria-hidden="true"></i> Preset #3
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column is-1">
+                        <button class="button orange-button" id="nfa-reset" style="width:100%;"
+                            title="Reset both canvases and start from scratch" disabled>
+                            <i class="mdi mdi-replay" aria-hidden="true" style="margin-right: -5px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="nfa-container" class="box" style="padding:0px; position: relative;">
+                <canvas id="nfa"></canvas>
+            </div>
+            <div class="card block" id="nfa-delta-transitions">
+                <header class="card-header">
+                    <p class="card-header-title fsa-description">
+                        N = (<em>Q, E, 𝛿, q<sub>0</sub>, F</em> )
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="fsa-description">
+                        <div class="columns" style="margin-bottom: 0px;">
+                            <div class="column">
+                                <em>Q</em> = <span class="states"></span>
+                            </div>
+                            <div class="column">
+                                <em>E</em> = <span class="alphabet"></span>
+                            </div>
+                            <div class="column">
+                                <em>q<sub>0</sub></em> = <span class="startState"></span>
+                            </div>
+                            <div class="column">
+                                <em>F</em> = <span class="acceptStates"></span>
+                            </div>
+                        </div>
+                        <div>
+                            𝛿 =
+                        </div>
+                    </div>
+                    <table class="table is-bordered is-striped is-fullwidth"></table>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="card title" id="dfa-title">
+                <div class="card-content">
+                    <div class="columns">
+                        <div class="column">
+                            <h1>
+                                Deterministic Finite Automaton (DFA)
+                            </h1>
+                        </div>
+                        <div class="column is-1">
+                            <button class="button blue-button" id="dfa-help-button" aria-haspopup="true"
+                                style="width:100%;" title="View instructions on how to use the DFA converter">
+                                <i class="mdi mdi-36px mdi-help-circle-outline title-help-icon" aria-hidden="true"
+                                    style="color: #fff;"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button class="button blue-button" id="step-backward" style="width:100%;"
+                            title="Go to the previous step in the conversion process" disabled>
+                            <i class="mdi mdi-skip-previous" aria-hidden="true"></i>Backward
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button blue-button conversion-button" id="step-forward" style="width:100%;"
+                            title="Go to the next step in the conversion process" disabled>
+                            <i class="mdi mdi-skip-next" aria-hidden="true"></i>Forward
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button blue-button conversion-button" id="animate" style="width:100%;"
+                            title="Automatically walk through the conversion process" disabled>
+                            <i class="mdi mdi-play" aria-hidden="true"></i>Animate
+                        </button>
+                    </div>
+                    <div class="column">
+                        <button class="button blue-button conversion-button" id="complete" style="width:100%;"
+                            title="Perform the conversion completely and view the final result" disabled>
+                            <i class="mdi mdi-skip-forward" aria-hidden="true"></i>Complete
+                        </button>
+                    </div>
+                    <div class="column is-1">
+                        <button class="button blue-button" id="dfa-reset" style="width:100%;"
+                            title="Reset the conversion process" disabled>
+                            <i class="mdi mdi-replay" aria-hidden="true" style="margin-right: -5px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="dfa-container" class="box" style="padding:0px; position: relative;">
+                <p class="dfa-conversion-step" id="dfa-conversion-step"></p>
+                <canvas id="dfa"></canvas>
+            </div>
+            <div class="card block" id="dfa-delta-transitions">
+                <header class="card-header">
+                    <p class="card-header-title fsa-description">
+                        M = (<em>Q', E, 𝛿', q<sub>0</sub>', F'</em> )
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="fsa-description">
+                        <div class="columns" style="margin-bottom: 0px;">
+                            <div class="column">
+                                <em>Q'</em> = <span class="states"></span>
+                            </div>
+                            <div class="column">
+                                <em>E</em> = <span class="alphabet"></span>
+                            </div>
+                            <div class="column">
+                                <em>q<sub>0</sub>'</em> = <span class="startState"></span>
+                            </div>
+                            <div class="column">
+                                <em>F'</em> = <span class="acceptStates"></span>
+                            </div>
+                        </div>
+                        <div>
+                            𝛿 =
+                        </div>
+                    </div>
+                    <table class="table is-bordered is-striped is-fullwidth"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card footnotes">
+        <div class="card-content">
+            <p>
+                This application was created by
+                <nobr><a href="https://github.com/joeylemon">Joey Lemon
+                        <i class="mdi mdi-18px mdi-github" aria-hidden="true"></i></a></nobr>
+                and <nobr><a href="https://github.com/awillif">Camille Williford
+                        <i class="mdi mdi-18px mdi-github" aria-hidden="true"></i></a></nobr>
+                during the summer of 2021 for <a href="https://www.linkedin.com/in/michael-berry-a9a5b510/">Dr. Michael
+                    Berry</a> as an independent study project in COSC 493 at the
+                University of Tennessee. It is an
+                adaptation of
+                the <a href="http://alexklibisz.github.io/FSA-Animate">original application</a> by
+                <nobr><a href="https://github.com/alexklibisz">Alex Klibisz
+                        <i class="mdi mdi-18px mdi-github" aria-hidden="true"></i></a></nobr>
+                and
+                <nobr><a href="https://github.com/c-minton">Connor Minton
+                        <i class="mdi mdi-18px mdi-github" aria-hidden="true"></i></a></nobr>, also created for <a
+                    href="https://www.linkedin.com/in/michael-berry-a9a5b510/">Dr.
+                    Michael Berry</a> as an <a
+                    href="https://honors.utk.edu/chancellors-honors-program/program-experience/curriculum/">honors-by-contract
+                    project</a> in COSC 312 during the spring of 2015.
+            </p>
+            <a class="button is-primary" href="https://github.com/joeylemon/nfa-to-dfa" style="margin-top: 20px;">
+                <strong><i class="mdi mdi-github" aria-hidden="true"></i> Source</strong>
+            </a>
+        </div>
+    </div>
+
+    <script src="src/js/index.js" type="module"></script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+{
+  "name": "nfa-to-dfa",
+  "type": "module",
+  "version": "0.0.2",
+  "description": "An application for visually converting NFAs to DFAs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joeylemon/nfa-to-dfa"
+  },
+  "author": "Alex Klibisz, Connor Minton, Camille Williford, Joey Lemon, Lauren Proctor",
+  "scripts": {
+    "start": "browser-sync start --server --files src --no-notify --host localhost --port 8000",
+    "test": "mocha --require should --global global,document 'src/js/test/*.test.js'",
+    "lint": "eslint src --ext .js,.ts --fix"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.26.14",
+    "eslint": "^7.26.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.23.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "jsdom": "^16.6.0",
+    "mocha": "^8.4.0",
+    "should": "^13.2.3"
+  },
+  "dependencies": {}
+}
